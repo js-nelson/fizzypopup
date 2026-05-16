@@ -1,0 +1,22 @@
+{
+  "name": "fizzypopup",
+  "version": "1.0.0",
+  "description": "Bulk-create Fizzy boards from a CSV file via the Fizzy API",
+  "type": "module",
+  "bin": {
+    "fizzypopup": "./bin/fizzypopup.js"
+  },
+  "files": [
+    "bin/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["fizzy", "boards", "csv", "bulk", "cli"],
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.0.0",
+    "csv-parse": "^5.5.0",
+    "inquirer": "^9.0.0"
+  }
+}
