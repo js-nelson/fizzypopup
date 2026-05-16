@@ -23,7 +23,7 @@ Options:
   -t, --token <token>   Fizzy API access token
   -f, --file <path>     Path to CSV file
   -e, --endpoint <url>  API endpoint URL template
-                        (default: https://api.fizzy.io/v1/accounts/{account_slug}/boards)
+                        (default: https://app.fizzy.do/{account_slug}/boards)
 ```
 
 Any omitted option triggers an interactive prompt. The file path prompt supports tab-completion.
@@ -58,6 +58,6 @@ The `files` field in package.json limits the published artifact to `bin/` only.
 
 ## API assumptions
 
-Default endpoint: `https://api.fizzy.io/v1/accounts/{account_slug}/boards`
+Default endpoint: `https://app.fizzy.do/{account_slug}/boards`
 Auth: `Authorization: Bearer <token>` header
 Body: `Content-Type: application/json` — one object per CSV row, keys from CSV headers
