@@ -1,10 +1,10 @@
 {
   "name": "fizzypopup",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Bulk-create Fizzy boards from a CSV file via the Fizzy API",
   "type": "module",
   "bin": {
-    "fizzypopup": "./bin/fizzypopup.js"
+    "fizzypopup": "bin/fizzypopup.js"
   },
   "files": [
     "bin/"
@@ -12,7 +12,14 @@
   "engines": {
     "node": ">=18"
   },
-  "keywords": ["fizzy", "boards", "csv", "bulk", "cli"],
+  "repository": "https://github.com/js-nelson/fizzypopup",
+  "keywords": [
+    "fizzy",
+    "boards",
+    "csv",
+    "bulk",
+    "cli"
+  ],
   "license": "MIT",
   "dependencies": {
     "commander": "^12.0.0",
