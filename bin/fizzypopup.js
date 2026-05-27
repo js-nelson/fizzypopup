@@ -6,12 +6,10 @@ import { existsSync, createReadStream, readdirSync, statSync, readFileSync } fro
 import { resolve, dirname, basename, join } from 'path';
 import { homedir } from 'os';
 import { fileURLToPath } from 'url';
-import { Agent, fetch } from 'undici';
 import { parse } from 'csv-parse';
 import inquirer from 'inquirer';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const h2Agent = new Agent({allowH2: true});
 
 // ── ANSI helpers ──────────────────────────────────────────────────────────────
 
@@ -72,7 +70,7 @@ function promptFilePath(message) {
 async function parseCSV(filePath) {
   const rows = [];
   const parser = createReadStream(filePath).pipe(
-    parse({ columns: true, skip_empty_lines: true, trim: true })
+    parse({ columns: true, skip_empty_lines: true, trim: true, bom: true })
   );
   for await (const row of parser) rows.push(row);
   return rows;
@@ -81,34 +79,30 @@ async function parseCSV(filePath) {
 // ── Fizzy API ─────────────────────────────────────────────────────────────────
 
 async function apiPost(url, token, body, debug = false) {
-  const bodyStr = JSON.stringify(body, null, 4);
+  const bodyStr = JSON.stringify(body);
 
   if (debug) {
     const masked = `Bearer ${token.slice(0, 4)}${'•'.repeat(Math.max(0, token.length - 4))}`;
     console.error(c.dim(`\n  → POST ${url}`));
     console.error(c.dim(`  → authorization: ${masked}`));
-    console.error(c.dim(`  → content-type: application/json`));
-    console.error(c.dim(`  → accept: application/json`));
     console.error(c.dim(`  → body: ${bodyStr}`));
   }
 
   const res = await fetch(url, {
     method: 'POST',
     headers: {
-      'authorization': `Bearer ${token}`,
-      'content-type':  'application/json',
-      'accept':        'application/json',
-      'user-agent': 'fizzypopup/1.1.0'
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
     body: bodyStr,
-    dispatcher: h2Agent
   });
 
   if (debug) console.error(c.dim(`  ← ${res.status}`));
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`HTTP ${res.status}, ${text}`);
+    throw new Error(`HTTP ${res.status}${text ? `: ${text}` : ''}`);
   }
 
   return res;
@@ -135,7 +129,7 @@ async function triageCard(baseUrl, slug, token, cardNumber, columnId, debug) {
 
 // ── Per-row processing ────────────────────────────────────────────────────────
 
-const COLUMNS = ['Backlog', 'Ready', 'In Progress', 'Testing', 'Done'];
+const COLUMNS = ['Backlog', 'Ready', 'In Progress', 'Testing'];
 
 async function processRow({ row, index, total, slug, token, baseUrl, backlogCards, debug }) {
   const label = Object.values(row)[0] || `Row ${index + 1}`;
